@@ -40,11 +40,16 @@ class ParanoidAndroidVersionPreference :
 
     override fun storage(context: Context): KeyValueStore = createSummaryStorage(context, key)
 
-    override fun getSummary(context: Context): CharSequence? =
-        SystemProperties.get(
+    override fun getSummary(context: Context): CharSequence? {
+        val arcvelleVersion = SystemProperties.get(ARCVELLE_VERSION_PROP)
+        if (!arcvelleVersion.isNullOrEmpty()) {
+            return arcvelleVersion
+        }
+        return SystemProperties.get(
             PARANOID_ANDROID_VERSION_PROP,
             context.getString(R.string.device_info_default)
         )
+    }
 
     override fun bind(preference: Preference, metadata: PreferenceMetadata) {
         super.bind(preference, metadata)
@@ -55,6 +60,7 @@ class ParanoidAndroidVersionPreference :
         get() = SensitivityLevel.NO_SENSITIVITY
 
     companion object {
+        private const val ARCVELLE_VERSION_PROP = "ro.arcvelle.version"
         private const val PARANOID_ANDROID_VERSION_PROP = "ro.aospa.version"
     }
 }
